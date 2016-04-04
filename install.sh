@@ -18,7 +18,7 @@ add-apt-repository -y ppa:ondrej/php5
 apt-get update
 
 echoyellow "Downloading & installing php, apache2 and mysql"
-apt-get install -y php5 apache2 libapache2-mod-php5 php5-curl php5-gd php5-mcrypt php5-readline mysql-server-5.5 php5-mysql git-core php5-xdebug
+apt-get install -y php5 apache2 libapache2-mod-php5 php5-curl php5-gd php5-mcrypt php5-readline mysql-server-5.5 php5-mysql git-all php5-xdebug
 
 cat << EOF | tee -a /etc/php5/mods-available/xdebug.ini
 xdebug.scream=1
@@ -102,6 +102,9 @@ EOL
 echoyellow "Enabling appserver.dev site"
 
 ln -s /etc/apache2/sites-available/appserver.conf /etc/apache2/sites-enabled/appserver.conf
+
+echoyellow "Disabling default 000-default.conf"
+rm /etc/apache2/sites-enabled/000-default.conf
 service apache2 restart
 
 echoyellow "Adding appserver.dev to /etc/hosts"
