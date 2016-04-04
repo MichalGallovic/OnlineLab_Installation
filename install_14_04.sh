@@ -110,7 +110,7 @@ service apache2 restart
 echoyellow "Adding appserver.dev to /etc/hosts"
 cat >> /etc/hosts << EOL
 # OLM APP SERVER
-localhost appserver.dev
+127.0.0.1 appserver.dev
 EOL
 
 echoyellow "Setting permissions to storage & boostrap/cache"
