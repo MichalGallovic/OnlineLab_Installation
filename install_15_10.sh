@@ -15,10 +15,11 @@ debconf-set-selections <<< 'mysql-server mysql-server/root_password_again passwo
 echoyellow "Downloading & installing curl and python"
 apt-get install -y vim curl python-software-properties
 add-apt-repository -y ppa:ondrej/php5
+add-apt-repository -y ppa:git-core/ppa
 apt-get update
 
 echoyellow "Downloading & installing php, apache2 and mysql"
-apt-get install -y php5 apache2 libapache2-mod-php5 php5-curl php5-gd php5-mcrypt php5-readline mysql-server php5-mysql git-all php5-xdebug
+apt-get install -y php5 apache2 libapache2-mod-php5 php5-curl php5-gd php5-mcrypt php5-readline mysql-server php5-mysql git php5-xdebug
 
 cat << EOF | tee -a /etc/php5/mods-available/xdebug.ini
 xdebug.scream=1
@@ -33,7 +34,7 @@ sed -i "s/display_errors = .*/display_errors = On/" /etc/php5/apache2/php.ini
 sed -i "s/disable_functions = .*/disable_functions = /" /etc/php5/cli/php.ini
 
 echoyellow "Restarting apache & mysql"
-systemctl apache2 restart
+systemctl restart apache2
 /etc/init.d/mysql start
 
 echoyellow "Creating mysql database"
@@ -105,7 +106,7 @@ ln -s /etc/apache2/sites-available/appserver.conf /etc/apache2/sites-enabled/app
 
 echoyellow "Disabling default 000-default.conf"
 rm /etc/apache2/sites-enabled/000-default.conf
-systemctl apache2 restart
+systemctl restart apache2
 
 echoyellow "Adding appserver.dev to /etc/hosts"
 cat >> /etc/hosts << EOL
