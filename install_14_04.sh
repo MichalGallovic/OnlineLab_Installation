@@ -13,12 +13,12 @@ debconf-set-selections <<< 'mysql-server mysql-server/root_password password roo
 debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'
 
 echoyellow "Downloading & installing curl and python"
-apt-get install -y vim curl python-software-properties
-add-apt-repository -y ppa:ondrej/php5-5.6
+apt-get install -y --force-yes vim curl python-software-properties
+add-apt-repository -y --force-yes ppa:ondrej/php5-5.6
 apt-get update
 
 echoyellow "Downloading & installing php, apache2 and mysql"
-apt-get install -y php5 apache2 libapache2-mod-php5 php5-curl php5-gd php5-mcrypt php5-readline mysql-server-5.5 php5-mysql git-all php5-xdebug
+apt-get install -y --force-yes php5 apache2 libapache2-mod-php5 php5-curl php5-gd php5-mcrypt php5-readline mysql-server-5.5 php5-mysql git-all php5-xdebug
 
 cat << EOF | tee -a /etc/php5/mods-available/xdebug.ini
 xdebug.scream=1
