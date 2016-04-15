@@ -5,8 +5,6 @@ wget https://raw.githubusercontent.com/xr09/rainbow.sh/master/rainbow.sh
 source rainbow.sh
 
 ran_from=$(pwd)
-version=$(lsb_release -sr)
-version=${version:0:2}
 
 echoyellow "Updating apt-get"
 apt-get update
@@ -15,17 +13,13 @@ debconf-set-selections <<< 'mysql-server mysql-server/root_password password roo
 debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'
 
 echoyellow "Downloading & installing curl and python"
-apt-get install -y --force-yes vim curl python-software-properties
-add-apt-repository -y ppa:ondrej/php5-5.6
-
-if [ $version = "15" ]; then
-  add-apt-repository -y ppa:git-core/ppa
-fi
+apt-get install -y vim curl python-software-properties
+add-apt-repository -y ppa:ondrej/php5
+add-apt-repository -y ppa:git-core/ppa
 apt-get update
 
 echoyellow "Downloading & installing php, apache2 and mysql"
-apt-get install -y --force-yes php5 apache2 libapache2-mod-php5 php5-curl php5-gd php5-mcrypt php5-readline mysql-server-5.5 php5-mysql php5-xdebug git-core
-
+apt-get install -y php5 apache2 libapache2-mod-php5 php5-curl php5-gd php5-mcrypt php5-readline mysql-server php5-mysql git php5-xdebug
 
 cat << EOF | tee -a /etc/php5/mods-available/xdebug.ini
 xdebug.scream=1
@@ -40,21 +34,28 @@ sed -i "s/display_errors = .*/display_errors = On/" /etc/php5/apache2/php.ini
 sed -i "s/disable_functions = .*/disable_functions = /" /etc/php5/cli/php.ini
 
 echoyellow "Restarting apache & mysql"
-if [ $version = "14" ]; then
-  service apache2 restart
-fi
-
-if [ $version = "15" ]; then
-  systemctl restart apache2
-fi
-
+systemctl restart apache2
 /etc/init.d/mysql start
 
 echoyellow "Creating mysql database"
 echo "create database olm_app_server" | mysql -u root -proot
 
 mkdir -p /var/www
-cd /var/www/olm_app_server
+cd /var/www
+
+echoyellow "Cloning olm app server from git repository"
+gitclone="git clone https://gitlab.com/michalgallovic/olm_appserver.git olm_app_server"
+
+eval $gitclone
+
+while : ;
+do
+   [[ -d "olm_app_server" ]] && break
+   echoyellow "Try again please ..."
+   eval $gitclone
+done
+
+cd olm_app_server
 
 echoyellow "Downloading & intalling composer"
 curl -sS https://getcomposer.org/installer | php
@@ -67,6 +68,20 @@ mv .env.example .env
 sed -i 's/DB_DATABASE.*/DB_DATABASE=olm_app_server/' .env
 sed -i 's/DB_USERNAME.*/DB_USERNAME=root/' .env
 sed -i 's/DB_PASSWORD.*/DB_PASSWORD=root/' .env
+
+
+devices=("tos1a")
+software_environments=("openloop" "matlab" "openmodelica" "scilab")
+base_dir=$(pwd)
+
+for device in "${devices[@]}"
+do
+    for env in "${software_environments[@]}"
+    do
+        mkdir -p "$base_dir/storage/logs/experiments/$device/$env"
+    done
+done
+
 
 
 echoyellow "Migrating and seeding olm app tables"
@@ -91,14 +106,7 @@ ln -s /etc/apache2/sites-available/appserver.conf /etc/apache2/sites-enabled/app
 
 echoyellow "Disabling default 000-default.conf"
 rm /etc/apache2/sites-enabled/000-default.conf
-
-if [ $version = "14" ]; then
-  service apache2 restart
-fi
-
-if [ $version = "15" ]; then
-  systemctl restart apache2
-fi
+systemctl restart apache2
 
 echoyellow "Adding appserver.dev to /etc/hosts"
 cat >> /etc/hosts << EOL
@@ -112,6 +120,5 @@ chmod -R 777 bootstrap/cache
 
 echoyellow "Adding user www-data to dialout (usb/serial devices group)"
 usermod -aG dialout www-data
-usermod -aG dialout vagrant
 
 rm $ran_from/rainbow.sh

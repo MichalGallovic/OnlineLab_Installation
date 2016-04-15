@@ -5,3 +5,5 @@ wget http://bit.ly/olm_appsrvr_14 -v -O install.sh; sudo /bin/bash install.sh; s
 ## Install on Ubuntu 15.04 and higher
 wget http://bit.ly/olm_appsrvr_15 -v -O install.sh; sudo /bin/bash install.sh; sudo rm install.sh
 
+## Or use vagrant installation
+
