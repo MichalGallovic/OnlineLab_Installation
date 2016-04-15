@@ -1,0 +1,27 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+    config.vm.define :laravel5 do |lv5_config|
+        lv5_config.vm.box = "olm_dev_trusty64"
+
+        lv5_config.ssh.forward_agent = true
+        
+        # This will give the machine a static IP uncomment to enable
+        lv5_config.vm.network :private_network, ip: "192.168.100.100"
+        
+        lv5_config.vm.network :forwarded_port, guest: 80, host: 8888, auto_correct: true
+        lv5_config.vm.network :forwarded_port, guest: 3306, host: 8889, auto_correct: true
+        lv5_config.vm.network :forwarded_port, guest: 5432, host: 5433, auto_correct: true
+        lv5_config.vm.hostname = "olmappserver"
+        lv5_config.vm.synced_folder "www", "/var/www", :nfs => {:mount_options => ['dmode=777','fmode=777']}
+        lv5_config.vm.provision :shell, :inline => "echo \"Europe/London\" | sudo tee /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata"
+
+        lv5_config.vm.provider :virtualbox do |v|
+            v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+            v.customize ["modifyvm", :id, "--memory", "512"]
+        end
+
+        lv5_config.vm.provision :shell, :path => "install.sh"
+    end
+end
