@@ -14,7 +14,7 @@ debconf-set-selections <<< 'mysql-server mysql-server/root_password_again passwo
 
 echoyellow "Downloading & installing curl and python"
 apt-get install -y --force-yes vim curl python-software-properties
-add-apt-repository -y --force-yes ppa:ondrej/php5-5.6
+add-apt-repository -y ppa:ondrej/php5-5.6
 apt-get update
 
 echoyellow "Downloading & installing php, apache2 and mysql"
