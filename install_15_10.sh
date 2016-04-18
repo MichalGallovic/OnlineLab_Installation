@@ -14,7 +14,7 @@ debconf-set-selections <<< 'mysql-server mysql-server/root_password_again passwo
 
 echoyellow "Downloading & installing curl and python"
 apt-get install -y vim curl python-software-properties
-add-apt-repository -y ppa:ondrej/php5
+add-apt-repository -y ppa:ondrej/php5-5.6
 add-apt-repository -y ppa:git-core/ppa
 apt-get update
 
@@ -64,7 +64,7 @@ echoyellow "Downloading & installing olm app server dependencies"
 php composer.phar install
 
 echoyellow "Setting db credentials"
-wget 
+wget https://gitlab.com/michalgallovic/olm_appserver_install/raw/master/.env.example
 mv .env.example .env
 sed -i 's/DB_DATABASE.*/DB_DATABASE=olm_app_server/' .env
 sed -i 's/DB_USERNAME.*/DB_USERNAME=root/' .env
