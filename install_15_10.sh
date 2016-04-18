@@ -64,24 +64,11 @@ echoyellow "Downloading & installing olm app server dependencies"
 php composer.phar install
 
 echoyellow "Setting db credentials"
+wget 
 mv .env.example .env
 sed -i 's/DB_DATABASE.*/DB_DATABASE=olm_app_server/' .env
 sed -i 's/DB_USERNAME.*/DB_USERNAME=root/' .env
 sed -i 's/DB_PASSWORD.*/DB_PASSWORD=root/' .env
-
-
-devices=("tos1a")
-software_environments=("openloop" "matlab" "openmodelica" "scilab")
-base_dir=$(pwd)
-
-for device in "${devices[@]}"
-do
-    for env in "${software_environments[@]}"
-    do
-        mkdir -p "$base_dir/storage/logs/experiments/$device/$env"
-    done
-done
-
 
 
 echoyellow "Migrating and seeding olm app tables"
