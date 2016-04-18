@@ -102,8 +102,7 @@ cat >> /etc/hosts << EOL
 EOL
 
 echoyellow "Setting permissions to storage & boostrap/cache"
-chmod -R 777 storage
-chmod -R 777 bootstrap/cache
+chmod -R 777 /var/www/olm_app_server
 
 echoyellow "Adding user www-data to dialout (usb/serial devices group)"
 usermod -aG dialout www-data
