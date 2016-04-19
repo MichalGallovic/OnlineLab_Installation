@@ -61,6 +61,7 @@ echoyellow "Downloading & installing olm app server dependencies"
 php composer.phar install
 
 echoyellow "Setting db credentials"
+wget https://gitlab.com/michalgallovic/olm_appserver_install/raw/master/.env.example
 mv .env.example .env
 sed -i 's/DB_DATABASE.*/DB_DATABASE=olm_app_server/' .env
 sed -i 's/DB_USERNAME.*/DB_USERNAME=root/' .env
