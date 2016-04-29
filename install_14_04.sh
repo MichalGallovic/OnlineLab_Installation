@@ -14,7 +14,7 @@ debconf-set-selections <<< 'mysql-server mysql-server/root_password_again passwo
 
 echoyellow "Downloading & installing curl and python"
 apt-get install -y vim curl python-software-properties
-add-apt-repository -y ppa:ondrej/php5
+add-apt-repository -y ppa:ondrej/php5-5.6
 apt-get update
 
 echoyellow "Downloading & installing php, apache2 and mysql"
@@ -63,25 +63,11 @@ echoyellow "Downloading & installing olm app server dependencies"
 php composer.phar install
 
 echoyellow "Setting db credentials"
+wget https://gitlab.com/michalgallovic/olm_appserver_install/raw/master/.env.example
 mv .env.example .env
 sed -i 's/DB_DATABASE.*/DB_DATABASE=olm_app_server/' .env
 sed -i 's/DB_USERNAME.*/DB_USERNAME=root/' .env
 sed -i 's/DB_PASSWORD.*/DB_PASSWORD=root/' .env
-
-
-devices=("tos1a")
-software_environments=("openloop" "matlab" "openmodelica" "scilab")
-base_dir=$(pwd)
-
-for device in "${devices[@]}"
-do
-    for env in "${software_environments[@]}"
-    do
-        mkdir -p "$base_dir/storage/logs/experiments/$device/$env"
-    done
-done
-
-
 
 echoyellow "Migrating and seeding olm app tables"
 php artisan key:generate
