@@ -33,8 +33,8 @@ echoyellow "Creating mysql database"
 echo "create database olm_app_server" | mysql -u root -proot
 
 mkdir -p /var/www
-chmod -R 775 /var/www
-chown -R www-data:www-data /var/www
+sudo chmod -R 775 /var/www
+sudo chown -R www-data:www-data /var/www
 mv olm_app_server /var/www/olm_app_server
 cd /var/www/olm_app_server
 
@@ -97,5 +97,3 @@ sudo chmod -R 775 /var/www/olm_app_server
 echoyellow "Adding user www-data to dialout (usb/serial devices group)"
 sudo usermod -aG dialout www-data
 sudo usermod -aG dialout $USER
-
-rm $ran_from/rainbow.sh
