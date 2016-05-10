@@ -11,7 +11,7 @@ echoyellow "Updating apt-get"
 sudo apt-get update
 
 echoyellow "Downloading & installing curl, python, php, apache2 and mysql"
-sudo apt-get install -y vim curl composer python-software-properties python-dev python-serial git php5.6 apache2 libapache2-mod-php5.6 php5.6-curl php5.6-gd php5.6-mcrypt php5.6-mbstring php7.0-xml php5.6-readline mysql-server php5.6-mysql php5.6-xdebug
+sudo apt-get install -y vim curl composer python-software-properties python-dev python-serial git php apache2 libapache2-mod-php php-curl php-gd php-mcrypt php-mbstring php7.0-xml php-readline mysql-server php-mysql php-xdebug
 
 sudo sh -c 'cat << EOF | tee -a /etc/php/5.6/mods-available/xdebug.ini
 xdebug.scream=1
