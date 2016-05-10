@@ -1,13 +1,9 @@
 #! /bin/bash
 
 # COLORING HELPERS
-wget https://raw.githubusercontent.com/xr09/rainbow.sh/master/rainbow.sh
 source rainbow.sh
 
 ran_from=$(pwd)
-
-debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'
-debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'
 
 sudo add-apt-repository -y ppa:ondrej/php
 
@@ -15,7 +11,7 @@ echoyellow "Updating apt-get"
 sudo apt-get update
 
 echoyellow "Downloading & installing curl, python, php, apache2 and mysql"
-sudo apt-get install -y vim curl composer python-software-properties python-dev python-serial git php5.6 apache2 libapache2-mod-php5.6 php5.6-curl php5.6-gd php5.6-mcrypt php5.6-mbstring php5.6-dom php5.6-readline mysql-server php5.6-mysql php5.6-xdebug
+sudo apt-get install -y vim curl composer python-software-properties python-dev python-serial git php5.6 apache2 libapache2-mod-php5.6 php5.6-curl php5.6-gd php5.6-mcrypt php5.6-mbstring php7.0-xml php5.6-readline mysql-server php5.6-mysql php5.6-xdebug
 
 sudo sh -c 'cat << EOF | tee -a /etc/php/5.6/mods-available/xdebug.ini
 xdebug.scream=1
@@ -37,28 +33,28 @@ echoyellow "Creating mysql database"
 echo "create database olm_app_server" | mysql -u root -proot
 
 mkdir -p /var/www
-cd /var/www
+chmod -R 775 /var/www
+chown -R www-data:www-data /var/www
+mv olm_app_server /var/www/olm_app_server
+cd /var/www/olm_app_server
 
-echoyellow "Cloning olm app server from git repository"
-gitclone="git clone https://gitlab.com/michalgallovic/olm_appserver.git olm_app_server"
+# echoyellow "Cloning olm app server from git repository"
+# gitclone="git clone https://gitlab.com/michalgallovic/olm_appserver.git olm_app_server"
 
-eval $gitclone
+# eval $gitclone
 
-while : ;
-do
-   [[ -d "olm_app_server" ]] && break
-   echoyellow "Try again please ..."
-   eval $gitclone
-done
-
-cd olm_app_server
+# while : ;
+# do
+#    [[ -d "olm_app_server" ]] && break
+#    echoyellow "Try again please ..."
+#    eval $gitclone
+# done
 
 echoyellow "Installing app dependencies with composer"
 composer install
 
 echoyellow "Setting app credentials"
-wget https://gitlab.com/michalgallovic/olm_appserver_install/raw/master/.env.example
-mv .env.example .env
+mv $ran_from/.env.example /var/www/olm_app_server/.env
 sed -i 's/DB_DATABASE.*/DB_DATABASE=olm_app_server/' .env
 sed -i 's/DB_USERNAME.*/DB_USERNAME=root/' .env
 sed -i 's/DB_PASSWORD.*/DB_PASSWORD=root/' .env
@@ -67,8 +63,6 @@ sed -i 's/DB_PASSWORD.*/DB_PASSWORD=root/' .env
 echoyellow "Migrating and seeding olm app tables"
 php artisan key:generate
 php artisan server:reset
-
-
 
 echoyellow "Setting up appserver.conf in apache"
 
@@ -101,7 +95,7 @@ sudo chown -R www-data:www-data /var/www/olm_app_server
 sudo chmod -R 775 /var/www/olm_app_server
 
 echoyellow "Adding user www-data to dialout (usb/serial devices group)"
-usermod -aG dialout www-data
-usermod -aG dialout $USER
+sudo usermod -aG dialout www-data
+sudo usermod -aG dialout $USER
 
 rm $ran_from/rainbow.sh
