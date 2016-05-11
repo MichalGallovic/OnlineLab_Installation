@@ -14,6 +14,7 @@ echoyellow "Downloading & installing curl, python, php, apache2, mysql, nodejs, 
 sudo apt-get install -y vim curl supervisor nodejs npm composer python-software-properties python-dev python-serial python-setuptools git php apache2 libapache2-mod-php php-curl php-gd php-mcrypt php-mbstring php7.0-xml php-readline mysql-server php-mysql php-xdebug
 
 echoyellow "Installing & setting up redis"
+tar xvzf redis-stable.tar.gz
 cd redis-stable
 make
 make test
