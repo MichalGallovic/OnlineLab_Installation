@@ -17,7 +17,6 @@ echoyellow "Installing & setting up redis"
 tar xvzf redis-stable.tar.gz
 cd redis-stable
 make
-make test
 sudo make install
 sudo mkdir /etc/redis
 sudo mkdir /var/redis
@@ -55,7 +54,7 @@ echo "create database olm_app_server" | mysql -u root -proot
 mkdir -p /var/www
 sudo chmod -R 775 /var/www
 sudo chown -R www-data:www-data /var/www
-mv olm_app_server /var/www/olm_app_server
+mv $ran_from/olm_app_server /var/www/olm_app_server
 cd /var/www/olm_app_server
 
 
