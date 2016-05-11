@@ -5,8 +5,6 @@ source rainbow.sh
 
 ran_from=$(pwd)
 
-sudo add-apt-repository -y ppa:ondrej/php
-
 echoyellow "Updating apt-get"
 sudo apt-get update
 
