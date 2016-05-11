@@ -11,7 +11,7 @@ echoyellow "Updating apt-get"
 sudo apt-get update
 
 echoyellow "Downloading & installing curl, python, php, apache2, mysql, nodejs, npm, supervisor"
-sudo apt-get install -y vim curl supervisor nodejs npm composer python-software-properties python-dev python-serial git php apache2 libapache2-mod-php php-curl php-mbstring php7.0-xml mysql-server php-mysql php-xdebug
+sudo apt-get install -y vim curl supervisor nodejs npm composer python-software-properties python-dev python-serial git php apache2 libapache2-mod-php php-curl php-mbstring php7.0-xml mysql-server php-mysql php-xdebug openssh-server
 
 echoyellow "Installing & setting up redis"
 tar xvzf redis-stable.tar.gz
@@ -31,12 +31,13 @@ sudo /etc/init.d/redis_6379 start
 
 
 echoyellow "Setting xdebug"
-sudo sh -c 'cat << EOF | tee -a /etc/php/5.6/mods-available/xdebug.ini
+sudo sh -c 'cat << EOF | tee -a /etc/php/7.0/mods-available/xdebug.ini
 xdebug.scream=1
 xdebug.cli_color=1
 xdebug.show_local_vars=1
 EOF'
 
+echoyellow "Enabling mod rewrite"
 sudo a2enmod rewrite
 
 sudo sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.0/apache2/php.ini
