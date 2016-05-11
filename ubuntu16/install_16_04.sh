@@ -10,9 +10,28 @@ sudo add-apt-repository -y ppa:ondrej/php
 echoyellow "Updating apt-get"
 sudo apt-get update
 
-echoyellow "Downloading & installing curl, python, php, apache2 and mysql"
-sudo apt-get install -y vim curl composer python-software-properties python-dev python-serial git php apache2 libapache2-mod-php php-curl php-gd php-mcrypt php-mbstring php7.0-xml php-readline mysql-server php-mysql php-xdebug
+echoyellow "Downloading & installing curl, python, php, apache2, mysql, nodejs, npm, supervisor"
+sudo apt-get install -y vim curl supervisor nodejs npm composer python-software-properties python-dev python-serial python-setuptools git php apache2 libapache2-mod-php php-curl php-gd php-mcrypt php-mbstring php7.0-xml php-readline mysql-server php-mysql php-xdebug
 
+echoyellow "Installing & setting up redis"
+cd redis-stable
+make
+make test
+sudo make install
+sudo mkdir /etc/redis
+sudo mkdir /var/redis
+sudo cp utils/redis_init_script /etc/init.d/redis_6379
+sudo cp redis.conf /etc/redis/6379.conf
+sudo mkdir /var/redis/6379
+sudo sed -i "s/daemonize .*/daemonize yes/" /etc/redis/6379.conf
+sudo sed -i "s/pidfile .*/pidfile \/var\/run\/redis_6379.pid/" /etc/redis/6379.conf
+sudo sed -i "s/logfile .*/logfile \/var\/log\/redis_6379.log/" /etc/redis/6379.conf
+sudo sed -i "s/dir .*/dir \/var\/redis\/6379/" /etc/redis/6379.conf
+sudo update-rc.d redis_6379 defaults
+sudo /etc/init.d/redis_6379 start
+
+
+echoyellow "Setting xdebug"
 sudo sh -c 'cat << EOF | tee -a /etc/php/5.6/mods-available/xdebug.ini
 xdebug.scream=1
 xdebug.cli_color=1
@@ -21,9 +40,9 @@ EOF'
 
 sudo a2enmod rewrite
 
-sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/5.6/apache2/php.ini
-sed -i "s/display_errors = .*/display_errors = On/" /etc/php/5.6/apache2/php.ini
-sed -i "s/disable_functions = .*/disable_functions = /" /etc/php/5.6/cli/php.ini
+sudo sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.0/apache2/php.ini
+sudo sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.0/apache2/php.ini
+sudo sed -i "s/disable_functions = .*/disable_functions = /" /etc/php/7.0/cli/php.ini
 
 echoyellow "Restarting apache & mysql"
 sudo service apache2 restart
@@ -38,17 +57,6 @@ sudo chown -R www-data:www-data /var/www
 mv olm_app_server /var/www/olm_app_server
 cd /var/www/olm_app_server
 
-# echoyellow "Cloning olm app server from git repository"
-# gitclone="git clone https://gitlab.com/michalgallovic/olm_appserver.git olm_app_server"
-
-# eval $gitclone
-
-# while : ;
-# do
-#    [[ -d "olm_app_server" ]] && break
-#    echoyellow "Try again please ..."
-#    eval $gitclone
-# done
 
 echoyellow "Installing app dependencies with composer"
 composer install
@@ -79,7 +87,7 @@ EOL'
 echoyellow "Enabling appserver.dev site"
 
 sudo ln -s /etc/apache2/sites-available/appserver.conf /etc/apache2/sites-enabled/appserver.conf
-
+node
 echoyellow "Disabling default 000-default.conf"
 sudo rm /etc/apache2/sites-enabled/000-default.conf
 sudo service apache2 restart
@@ -97,3 +105,7 @@ sudo chmod -R 775 /var/www/olm_app_server
 echoyellow "Adding user www-data to dialout (usb/serial devices group)"
 sudo usermod -aG dialout www-data
 sudo usermod -aG dialout $USER
+
+echoyellow "Installing nodejs dependencies"
+cd /var/www/olm_app_server
+sudo npm install
