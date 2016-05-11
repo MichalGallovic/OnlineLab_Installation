@@ -112,6 +112,7 @@ echoyellow "Setting up supervisor for laravel queue"
 sudo mv $ran_from/laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
 sudo mv $ran_from/nodejs-worker.conf /etc/supervisor/conf.d/nodejs-worker.conf
 sudo mv /etc/init.d/supervisor /etc/init.d/supervisord
+sudo update-rc.d supervisord defaults
 sudo service supervisord start
 sudo supervisorctl reread
 sudo supervisorctl update
