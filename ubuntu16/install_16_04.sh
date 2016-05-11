@@ -87,7 +87,6 @@ EOL'
 echoyellow "Enabling appserver.dev site"
 
 sudo ln -s /etc/apache2/sites-available/appserver.conf /etc/apache2/sites-enabled/appserver.conf
-node
 echoyellow "Disabling default 000-default.conf"
 sudo rm /etc/apache2/sites-enabled/000-default.conf
 sudo service apache2 restart
