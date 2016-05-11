@@ -19,10 +19,9 @@ cd redis-stable
 make
 sudo make install
 sudo mkdir /etc/redis
-sudo mkdir /var/redis
+sudo mkdir -p /var/redis/6379
 sudo cp utils/redis_init_script /etc/init.d/redis_6379
 sudo cp redis.conf /etc/redis/6379.conf
-sudo mkdir /var/redis/6379
 sudo sed -i "s/daemonize .*/daemonize yes/" /etc/redis/6379.conf
 sudo sed -i "s/pidfile .*/pidfile \/var\/run\/redis_6379.pid/" /etc/redis/6379.conf
 sudo sed -i "s/logfile .*/logfile \/var\/log\/redis_6379.log/" /etc/redis/6379.conf
@@ -112,7 +111,8 @@ sudo npm install
 echoyellow "Setting up supervisor for laravel queue"
 sudo mv $ran_from/laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
 sudo mv $ran_from/nodejs-worker.conf /etc/supervisor/conf.d/nodejs-worker.conf
-sudo service supervisor start
+sudo mv /etc/init.d/supervisor /etc/init.d/supervisord
+sudo service supervisord start
 sudo supervisorctl reread
 sudo supervisorctl update
 sudo supervisorctl start laravel-worker:*
