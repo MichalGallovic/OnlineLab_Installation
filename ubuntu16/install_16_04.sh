@@ -109,3 +109,12 @@ sudo usermod -aG dialout $USER
 echoyellow "Installing nodejs dependencies"
 cd /var/www/olm_app_server
 sudo npm install
+
+echoyellow "Setting up supervisor for laravel queue"
+sudo mv $ran_from/laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
+sudo mv $ran_from/nodejs-worker.conf /etc/supervisor/conf.d/nodejs-worker.conf
+sudo service supervisor start
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start laravel-worker:*
+sudo supervisorctl start nodejs-worker:*
