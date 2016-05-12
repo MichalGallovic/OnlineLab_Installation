@@ -15,7 +15,7 @@ sudo apt-get install -y vim curl supervisor nodejs npm composer python-software-
 
 echoyellow "Installing & setting up redis"
 tar xvzf redis-stable.tar.gz
-cd redis-stable
+cd redis-stablesudo 
 make
 sudo make install
 sudo mkdir /etc/redis
@@ -100,6 +100,8 @@ EOL'
 echoyellow "Setting permissions and ownership"
 sudo chown -R www-data:www-data /var/www/olm_app_server
 sudo chmod -R 775 /var/www/olm_app_server
+echoyellow "Enabling www-data to run programs"
+sudo sed -i "s/www-data:\/var\/www.*/www-data:\/var\/www:\/bin\/bash/" /etc/passwd
 
 echoyellow "Adding user www-data to dialout (usb/serial devices group)"
 sudo usermod -aG dialout www-data
