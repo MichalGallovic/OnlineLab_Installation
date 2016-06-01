@@ -15,7 +15,7 @@ sudo apt-get install -y vim curl supervisor nodejs npm composer python-software-
 
 echoyellow "Installing & setting up redis"
 tar xvzf redis-stable.tar.gz
-cd redis-stablesudo 
+cd redis-stable 
 make
 sudo make install
 sudo mkdir /etc/redis
